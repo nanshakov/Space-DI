@@ -58,7 +58,7 @@ class Application {
         val interfaceToClass = HashMap<Class<*>, List<Class<*>>>()
 
         classes.forEach { cl ->
-            val interfaces = cl!!.interfaces
+            val interfaces = cl.interfaces
             if (interfaces.isEmpty())
                 logger.warn { "Interfaces for class @Service $cl is empty" }
             interfaces.forEach {
@@ -74,6 +74,7 @@ class Application {
     }
 
 
+    //https://dreampuf.github.io/GraphvizOnline/#
     private fun print(graph: Graph<Class<*>, DefaultEdge>) {
         val vertexIdProvider: ComponentNameProvider<Class<*>> =
             ComponentNameProvider { cl -> cl.name.replace('.', '_') }
