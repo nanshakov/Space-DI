@@ -63,7 +63,8 @@ class Application {
                 val instance = constructor.newInstance()
                 currentInstant[instance.javaClass] = instance
             } else {
-                val instance = constructor.newInstance(resolveParams(constructor.parameters, currentInstant))
+                val resolveParams = resolveParams(constructor.parameters, currentInstant)
+                val instance = constructor.newInstance(resolveParams)
                 currentInstant[instance.javaClass] = instance
             }
         }
@@ -71,13 +72,10 @@ class Application {
     }
 
     //возвращает список подходящих обьектов
-    private fun resolveParams(params: Array<Parameter>, currentInstant: HashMap<Class<*>, Any>): Array<Any> {
-        val result = ArrayList<Any>(params.size)
-        params.forEach {
-            val type = it.type
-            result.add((currentInstant[findClassByInterface(type)]!!))
-        }
-        return arrayOf(result)
+    private fun resolveParams(params: Array<Parameter>, currentInstant: HashMap<Class<*>, Any>): Array<*> {
+        return params.map {
+            currentInstant[findClassByInterface(it.type)]!!
+        }.toTypedArray()
     }
 
     //ищет классы по интерфейсу
