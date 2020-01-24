@@ -41,6 +41,8 @@ class Application {
         logger.trace { services }
 
         interfaceToClass.putAll(readStructure(services))
+
+        logger.debug { "Construct graph of dependency..." }
         val tree: Graph<Class<*>, DefaultEdge> = DirectedAcyclicGraph(DefaultEdge::class.java)
 
         services.forEach { c: Class<*>? ->

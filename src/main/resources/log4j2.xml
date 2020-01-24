@@ -1,14 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<configuration>
-    <appenders>
-        <console name="stdout" target="SYSTEM_OUT">
-            <patternLayout pattern="%d{ABSOLUTE} %5p %c{1}:%L - %m%n"/>
-        </console>
-    </appenders>
-
-    <loggers>
-        <root level="trace">
-            <appenderRef ref="stdout"/>
-        </root>
-    </loggers>
-</configuration>
+<Configuration status="WARN" monitorInterval="30">
+    <Properties>
+        <Property name="PID">????</Property>
+        <Property name="LOG_PATTERN">${sys:LOG_FILE} %d{yyyy-MM-dd HH:mm:ss.SSS}] service%X{context} - ${sys:PID} %5p
+            [%t] --- %c{1}: %m%n
+        </Property>
+    </Properties>
+    <Appenders>
+        <Console name="Console" target="SYSTEM_OUT" follow="true">
+            <PatternLayout pattern="${LOG_PATTERN}"/>
+        </Console>
+    </Appenders>
+    <Loggers>
+        <Root level="trace">
+            <AppenderRef ref="Console"/>
+        </Root>
+    </Loggers>
+</Configuration>
