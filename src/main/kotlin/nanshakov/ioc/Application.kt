@@ -36,7 +36,7 @@ class Application {
 
         val reflections = Reflections(config)
         val services = reflections.getTypesAnnotatedWith(Service::class.java)
-        logger.info { "Found ${services.size} classes @Service" }
+        logger.debug { "Found ${services.size} classes @Service" }
 
         interfaceToClass.putAll(readStructure(services))
         val tree: Graph<Class<*>, DefaultEdge> = DirectedAcyclicGraph(DefaultEdge::class.java)
@@ -58,7 +58,7 @@ class Application {
         val orderIterator: TopologicalOrderIterator<Class<*>, DefaultEdge> = TopologicalOrderIterator(tree)
         while (orderIterator.hasNext()) {
             val cl = orderIterator.next();
-            logger.info { cl }
+            logger.debug { cl }
             val constructor = cl.constructors[0]
             //создаем инстанс
             val instance = if (constructor.parameters.isEmpty()) {
@@ -72,7 +72,7 @@ class Application {
         }
         runRunnable()
 
-        logger.info { context }
+        logger.debug { context }
     }
 
     private fun tryInvokePostAction(instance: Any) {
@@ -88,7 +88,7 @@ class Application {
     }
 
     private fun runRunnable() {
-        logger.debug { "Running..." }
+        logger.info { "Running..." }
         val runnableClasses = interfaceToClass[Runnable::class.java]
         val instances = context.get(runnableClasses!!)
         instances.forEach {
@@ -140,14 +140,14 @@ class Application {
         val exporter = DOTExporter<Class<*>, DefaultEdge>(vertexIdProvider, vertexLabelProvider, null)
         val writer: Writer = StringWriter()
         exporter.exportGraph(graph, writer)
-        logger.info { writer.toString() }
+        logger.debug { writer.toString() }
     }
 
     private fun printUseTopologicalOrder(graph: Graph<Class<*>, DefaultEdge>) {
         val orderIterator: TopologicalOrderIterator<Class<*>, DefaultEdge> = TopologicalOrderIterator(graph)
         println("\nTopological Ordering:")
         while (orderIterator.hasNext()) {
-            logger.info { orderIterator.next() }
+            logger.debug { orderIterator.next() }
         }
     }
 }
