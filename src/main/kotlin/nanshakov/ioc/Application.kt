@@ -29,6 +29,7 @@ class Application {
     private val context = Context()
 
     fun run(pkg: Package) {
+        logo()
         val config = ConfigurationBuilder()
             .setScanners(ResourcesScanner(), SubTypesScanner(false), TypeAnnotationsScanner())
             .setUrls(ClasspathHelper.forPackage(pkg.name))
@@ -78,6 +79,36 @@ class Application {
         }
         runRunnable()
         logger.debug { context }
+    }
+
+    private fun logo() {
+        print(" .|'''.|                                      '||''|.   '||' \n" +
+                " ||..  '  ... ...   ....     ....    ....      ||   ||   ||  \n" +
+                "  ''|||.   ||'  || '' .||  .|   '' .|...||     ||    ||  ||  \n" +
+                ".     '||  ||    | .|' ||  ||      ||          ||    ||  ||  \n" +
+                "|'....|'   ||...'  '|..'|'  '|...'  '|...'    .||...|'  .||. \n" +
+                "           ||                                                \n" +
+                "          ''''                                               \n")
+        print(
+            "                _____\n" +
+                    "             ,-\"     \"-.\n" +
+                    "            / o       o \\\n" +
+                    "           /   \\     /   \\\n" +
+                    "          /     )-\"-(     \\\n" +
+                    "         /     ( 6 6 )     \\\n" +
+                    "        /       \\ \" /       \\\n" +
+                    "       /         )=(         \\\n" +
+                    "      /   o   .--\"-\"--.   o   \\\n" +
+                    "     /    I  /  -   -  \\  I    \\\n" +
+                    " .--(    (_}y/\\       /\\y{_)    )--.\n" +
+                    "(    \".___l\\/__\\_____/__\\/l___,\"    )\n" +
+                    " \\                                 /\n" +
+                    "  \"-._      o O o O o O o      _,-\"\n" +
+                    "      `--Y--.___________.--Y--'\n" +
+                    "         |==.___________.==| hjw\n" +
+                    "         `==.___________.==' `97"
+        )
+        println()
     }
 
     private fun tryInvokePostAction(instance: Any) {
