@@ -81,6 +81,9 @@ class Application {
     }
 
     private fun logo() {
+        val ANSI_RESET = "\u001B[0m"
+        val ANSI_YELLOW = "\u001B[33m"
+        val ANSI_BLUE = "\u001B[34m"
         print(" .|'''.|                                      '||''|.   '||' \n" +
                 " ||..  '  ... ...   ....     ....    ....      ||   ||   ||  \n" +
                 "  ''|||.   ||'  || '' .||  .|   '' .|...||     ||    ||  ||  \n" +
@@ -91,10 +94,10 @@ class Application {
         print(
             "                _____\n" +
                     "             ,-\"     \"-.\n" +
-                    "            / o       o \\\n" +
+                    "            / ${ANSI_BLUE}o$ANSI_RESET       ${ANSI_BLUE}o$ANSI_RESET \\\n" +
                     "           /   \\     /   \\\n" +
                     "          /     )-\"-(     \\\n" +
-                    "         /     ( 6 6 )     \\\n" +
+                    "         /     ( ${ANSI_YELLOW}6$ANSI_RESET ${ANSI_YELLOW}6$ANSI_RESET )     \\\n" +
                     "        /       \\ \" /       \\\n" +
                     "       /         )=(         \\\n" +
                     "      /   o   .--\"-\"--.   o   \\\n" +
