@@ -13,12 +13,11 @@ class Context {
         }
     }
 
-    fun get(instance: Collection<Class<*>>): List<Any> {
-        val result = listOf<Any>()
-        instance.forEach { result.plus(get(it)) }
-        return result
+    fun get(instance: Collection<Class<*>>) = instance.map { get(it) }.toTypedArray()
+
+    fun get(instance: Class<*>) = context[instance]!!.first()
+
+    override fun toString(): String {
+        return context.toString()
     }
-
-    fun get(instance: Class<*>) = context[instance.javaClass]!!.first()
-
 }

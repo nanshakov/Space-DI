@@ -1,6 +1,8 @@
 package nanshakov.ioc
 
 import mu.KotlinLogging
+import nanshakov.Context
+import nanshakov.ioc.annotation.PostConstruct
 import nanshakov.ioc.annotation.Service
 import org.jgrapht.Graph
 import org.jgrapht.graph.DefaultEdge
@@ -24,6 +26,7 @@ import java.lang.reflect.Parameter
 class Application {
     private val logger = KotlinLogging.logger {}
     private val interfaceToClass = HashMap<Class<*>, List<Class<*>>>()
+    private val context = Context()
 
     fun run(pkg: Package) {
         val config = ConfigurationBuilder()
@@ -52,29 +55,54 @@ class Application {
         }
         this.print(tree)
 
-        val currentInstant = java.util.HashMap<Class<*>, Any>()
-
         val orderIterator: TopologicalOrderIterator<Class<*>, DefaultEdge> = TopologicalOrderIterator(tree)
         while (orderIterator.hasNext()) {
             val cl = orderIterator.next();
             logger.info { cl }
             val constructor = cl.constructors[0]
-            if (constructor.parameters.isEmpty()) {
-                val instance = constructor.newInstance()
-                currentInstant[instance.javaClass] = instance
+            //создаем инстанс
+            val instance = if (constructor.parameters.isEmpty()) {
+                constructor.newInstance()
             } else {
-                val resolveParams: Array<Any> = resolveParams(constructor.parameters, currentInstant)
-                val instance = constructor.newInstance(*resolveParams)
-                currentInstant[instance.javaClass] = instance
+                val resolveParams: Array<Any> = resolveParams(constructor.parameters, context)
+                constructor.newInstance(*resolveParams)
             }
+            context.push(instance)
+            tryInvokePostAction(instance)
         }
-        logger.info { currentInstant }
+        runRunnable()
+
+        logger.info { context }
+    }
+
+    private fun tryInvokePostAction(instance: Any) {
+        val methods = instance.javaClass.declaredMethods
+        if (methods.any { it.isAnnotationPresent(PostConstruct::class.java) }) {
+            val postConstructMethod = methods.first() {
+                it.isAnnotationPresent(PostConstruct::class.java)
+            }
+            logger.debug { "Found method $postConstructMethod with annotation @PostConstruct" }
+            logger.debug { "invoke..." }
+            postConstructMethod.invoke(instance)
+        }
+    }
+
+    private fun runRunnable() {
+        logger.debug { "Running..." }
+        val runnableClasses = interfaceToClass[Runnable::class.java]
+        val instances = context.get(runnableClasses!!)
+        instances.forEach {
+            val run = it.javaClass.getMethod("run")
+            logger.debug { "Found runnable method $run in $it" }
+            logger.debug { "invoke..." }
+            run.invoke(it)
+        }
     }
 
     //возвращает список подходящих обьектов
-    private fun resolveParams(params: Array<Parameter>, currentInstant: HashMap<Class<*>, Any>): Array<Any> {
+    private fun resolveParams(params: Array<Parameter>, context: Context): Array<Any> {
         return params.map {
-            currentInstant[findClassByInterface(it.type)]!!
+            context.get(findClassByInterface(it.type))
         }.toTypedArray()
     }
 

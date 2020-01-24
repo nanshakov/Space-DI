@@ -2,13 +2,12 @@ package nanshakov.app
 
 import nanshakov.ioc.annotation.PostConstruct
 import nanshakov.ioc.annotation.Service
-import nanshakov.ioc.annotation.Type
 
 interface TestService {
     fun smth()
 }
 
-@Service(type = Type.SINGLETON)
+@Service()
 class TestServiceImpl(private var service2: TestService2) : TestService {
 
     @PostConstruct
