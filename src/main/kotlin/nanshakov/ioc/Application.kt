@@ -84,11 +84,11 @@ class Application {
         val ANSI_RESET = "\u001B[0m"
         val ANSI_YELLOW = "\u001B[33m"
         val ANSI_BLUE = "\u001B[34m"
-        print(" .|'''.|                                      '||''|.   '||' \n" +
-                " ||..  '  ... ...   ....     ....    ....      ||   ||   ||  \n" +
-                "  ''|||.   ||'  || '' .||  .|   '' .|...||     ||    ||  ||  \n" +
-                ".     '||  ||    | .|' ||  ||      ||          ||    ||  ||  \n" +
-                "|'....|'   ||...'  '|..'|'  '|...'  '|...'    .||...|'  .||. \n" +
+        print(" .|'''.|                                      ${ANSI_BLUE}'||''|.   ${ANSI_YELLOW}'||'$ANSI_RESET \n" +
+                " ||..  '  ... ...   ....     ....    ....      ${ANSI_BLUE}||   ||   ${ANSI_YELLOW}||$ANSI_RESET  \n" +
+                "  ''|||.   ||'  || '' .||  .|   '' .|...||     ${ANSI_BLUE}||    ||  ${ANSI_YELLOW}||$ANSI_RESET  \n" +
+                ".     '||  ||    | .|' ||  ||      ||          ${ANSI_BLUE}||    ||  ${ANSI_YELLOW}||$ANSI_RESET  \n" +
+                "|'....|'   ||...'  '|..'|'  '|...'  '|...'    ${ANSI_BLUE}.||...|'  ${ANSI_YELLOW}.||.$ANSI_RESET \n" +
                 "           ||                                                \n" +
                 "          ''''                                               \n")
         print(
