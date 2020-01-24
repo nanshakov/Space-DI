@@ -23,7 +23,7 @@ import java.lang.reflect.Parameter
 
 class Application {
     private val logger = KotlinLogging.logger {}
-    val context = HashMap<Class<*>, List<Class<*>>>()
+    private val interfaceToClass = HashMap<Class<*>, List<Class<*>>>()
 
     fun run(pkg: Package) {
         val config = ConfigurationBuilder()
@@ -35,7 +35,7 @@ class Application {
         val services = reflections.getTypesAnnotatedWith(Service::class.java)
         logger.info { "Found ${services.size} classes @Service" }
 
-        context.putAll(constructContext(services))
+        interfaceToClass.putAll(readStructure(services))
         val tree: Graph<Class<*>, DefaultEdge> = DirectedAcyclicGraph(DefaultEdge::class.java)
 
         services.forEach { c: Class<*>? ->
@@ -52,7 +52,7 @@ class Application {
         }
         this.print(tree)
 
-        var currentInstant = java.util.HashMap<Class<*>, Any>()
+        val currentInstant = java.util.HashMap<Class<*>, Any>()
 
         val orderIterator: TopologicalOrderIterator<Class<*>, DefaultEdge> = TopologicalOrderIterator(tree)
         while (orderIterator.hasNext()) {
@@ -63,8 +63,8 @@ class Application {
                 val instance = constructor.newInstance()
                 currentInstant[instance.javaClass] = instance
             } else {
-                val resolveParams = resolveParams(constructor.parameters, currentInstant)
-                val instance = constructor.newInstance(resolveParams)
+                val resolveParams: Array<Any> = resolveParams(constructor.parameters, currentInstant)
+                val instance = constructor.newInstance(*resolveParams)
                 currentInstant[instance.javaClass] = instance
             }
         }
@@ -72,7 +72,7 @@ class Application {
     }
 
     //возвращает список подходящих обьектов
-    private fun resolveParams(params: Array<Parameter>, currentInstant: HashMap<Class<*>, Any>): Array<*> {
+    private fun resolveParams(params: Array<Parameter>, currentInstant: HashMap<Class<*>, Any>): Array<Any> {
         return params.map {
             currentInstant[findClassByInterface(it.type)]!!
         }.toTypedArray()
@@ -80,11 +80,11 @@ class Application {
 
     //ищет классы по интерфейсу
     private fun findClassByInterface(_interface: Class<*>): Class<*> {
-        return context[_interface]!!.first()
+        return interfaceToClass[_interface]!!.first()
     }
 
     //создает мапу interface -> all classes impl
-    private fun constructContext(classes: Set<Class<*>>): HashMap<Class<*>, List<Class<*>>> {
+    private fun readStructure(classes: Set<Class<*>>): HashMap<Class<*>, List<Class<*>>> {
         val interfaceToClass = HashMap<Class<*>, List<Class<*>>>()
 
         classes.forEach { cl ->
