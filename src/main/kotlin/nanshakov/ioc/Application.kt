@@ -71,7 +71,6 @@ class Application {
             tryInvokePostAction(instance)
         }
         runRunnable()
-
         logger.debug { context }
     }
 
