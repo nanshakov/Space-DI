@@ -10,6 +10,6 @@ interface TestService2 {
 class TestService2Impl : TestService2 {
 
     override fun smth2() {
-        println(TestService2::class.java.toString() + " smth()")
+        println("smth()")
     }
 }

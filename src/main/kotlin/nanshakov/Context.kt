@@ -1,9 +1,13 @@
 package nanshakov
 
+import mu.KotlinLogging
+
 class Context {
+    private val logger = KotlinLogging.logger {}
     private val context = HashMap<Class<*>, List<Any>>()
 
     fun push(instance: Any) {
+        logger.trace { "push to context $instance" }
         if (context.containsKey(instance.javaClass)) {
             val list = context[instance.javaClass]!!
             list.plus(instance)

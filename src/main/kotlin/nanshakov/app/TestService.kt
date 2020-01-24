@@ -12,11 +12,11 @@ class TestServiceImpl(private var service2: TestService2) : TestService {
 
     @PostConstruct
     fun post() {
-        println(TestService::class.java.toString() + " post()")
+        println("post() triggered")
     }
 
     override fun smth() {
         service2.smth2()
-        println(TestService::class.java.toString() + " smth()")
+        println("smth()")
     }
 }

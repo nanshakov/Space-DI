@@ -36,7 +36,9 @@ class Application {
 
         val reflections = Reflections(config)
         val services = reflections.getTypesAnnotatedWith(Service::class.java)
+
         logger.debug { "Found ${services.size} classes @Service" }
+        logger.trace { services }
 
         interfaceToClass.putAll(readStructure(services))
         val tree: Graph<Class<*>, DefaultEdge> = DirectedAcyclicGraph(DefaultEdge::class.java)
@@ -58,8 +60,9 @@ class Application {
         val orderIterator: TopologicalOrderIterator<Class<*>, DefaultEdge> = TopologicalOrderIterator(tree)
         while (orderIterator.hasNext()) {
             val cl = orderIterator.next();
-            logger.debug { cl }
+            logger.trace { "processing $cl" }
             val constructor = cl.constructors[0]
+            logger.trace { "$cl have ${constructor.parameters.size} parameters" }
             //создаем инстанс
             val instance = if (constructor.parameters.isEmpty()) {
                 constructor.newInstance()
@@ -67,6 +70,7 @@ class Application {
                 val resolveParams: Array<Any> = resolveParams(constructor.parameters, context)
                 constructor.newInstance(*resolveParams)
             }
+            logger.trace { "$cl construct successful" }
             context.push(instance)
             tryInvokePostAction(instance)
         }
@@ -130,7 +134,6 @@ class Application {
         return interfaceToClass
     }
 
-    //https://dreampuf.github.io/GraphvizOnline/#
     private fun print(graph: Graph<Class<*>, DefaultEdge>) {
         val vertexIdProvider: ComponentNameProvider<Class<*>> =
             ComponentNameProvider { cl -> cl.name.replace('.', '_') }
@@ -139,6 +142,7 @@ class Application {
         val exporter = DOTExporter<Class<*>, DefaultEdge>(vertexIdProvider, vertexLabelProvider, null)
         val writer: Writer = StringWriter()
         exporter.exportGraph(graph, writer)
+        logger.debug { "https://dreampuf.github.io/GraphvizOnline/" }
         logger.debug { writer.toString() }
     }
 
