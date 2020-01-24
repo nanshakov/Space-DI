@@ -1,4 +1,4 @@
-package nanshakov
+package nanshakov.ioc
 
 import mu.KotlinLogging
 

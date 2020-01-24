@@ -1,7 +1,6 @@
 package nanshakov.ioc
 
 import mu.KotlinLogging
-import nanshakov.Context
 import nanshakov.ioc.annotation.PostConstruct
 import nanshakov.ioc.annotation.Service
 import org.jgrapht.Graph
